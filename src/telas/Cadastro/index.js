@@ -4,14 +4,25 @@ import Botao from '../../componentes/Botao';
 import { EntradaTexto } from '../../componentes/EntradaTexto';
 import estilos from './estilos';
 import { cadastrar } from '../../servicos/requisicoesFirebase';
+import { auth } from '../../config/firebase';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-
-export default function Cadastro({ navigation }) {  
+export default function Cadastro({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmaSenha, setConfirmaSenha] = useState('');
 
-  async function realizarCadastro(){
+  useEffect(() => {
+    createUserWithEmailAndPassword(auth, "teste@teste.com", "123456")
+      .then((userCredential) => {
+        console.log(userCredential);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }, [])
+
+  async function realizarCadastro() {
     await cadastrar(email, senha, confirmaSenha);
     setEmail('')
     setSenha('')
@@ -20,7 +31,7 @@ export default function Cadastro({ navigation }) {
 
   return (
     <View style={estilos.container}>
-      <EntradaTexto 
+      <EntradaTexto
         label="E-mail"
         value={email}
         onChangeText={texto => setEmail(texto)}
@@ -38,7 +49,7 @@ export default function Cadastro({ navigation }) {
         onChangeText={texto => setConfirmaSenha(texto)}
         secureTextEntry
       />
-      
+
       <Botao onPress={() => realizarCadastro()}>CADASTRAR</Botao>
     </View>
   );
